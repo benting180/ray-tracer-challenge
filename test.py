@@ -1,8 +1,11 @@
 from math import sqrt
 import unittest
+from base import Base
 from point import Point
 from vector import Vector
-from base import Base
+import color
+from color import Color
+from misc import equals
 
 
 
@@ -61,23 +64,23 @@ class TestPrimitive(unittest.TestCase):
     
     def test_mag1(self):
         v = Vector(1, 0, 0)
-        self.assertEqual(1, v.mag())
+        self.assertTrue(equals(1, v.mag()))
     
     def test_mag2(self):
         v = Vector(0, 1, 0)
-        self.assertEqual(1, v.mag())
+        self.assertTrue(equals(1, v.mag()))
 
     def test_mag3(self):
         v = Vector(0, 0, 1)
-        self.assertEqual(1, v.mag())
+        self.assertTrue(equals(1, v.mag()))
     
     def test_mag4(self):
         v = Vector(1, 2, 3)
-        self.assertEqual(sqrt(14), v.mag())
+        self.assertTrue(equals(sqrt(14), v.mag()))
     
     def test_mag5(self):
         v = Vector(-1, -2, -3)
-        self.assertEqual(sqrt(14), v.mag())
+        self.assertTrue(equals(sqrt(14), v.mag()))
 
     def test_nor1(self):
         v = Vector(4, 0, 0)
@@ -89,14 +92,47 @@ class TestPrimitive(unittest.TestCase):
     
     def test_nor3(self):
         v = Vector(1, 2, 3)
-        self.assertEqual(1, v.normal().mag())
+        self.assertTrue(equals(1, v.normal().mag()))
     
     def test_dot(self):
         a = Vector(1, 2, 3)
         b = Vector(2, 3, 4)
         self.assertTrue(Vector(-1, 2, -1).equals(a.cross(b)))
         self.assertTrue(Vector(1, -2, 1).equals(b.cross(a)))
+    
+    def test_color1(self):
+        c = Color(-0.5, 0.4, 1.7)
+        self.assertTrue(equals(c.x, -0.5))
+        self.assertTrue(equals(c.y, 0.4))
+        self.assertTrue(equals(c.z, 1.7))
 
+    def test_color2(self):
+        c1 = Color(0.9, 0.6, 0.75)
+        c2 = Color(0.7, 0.1, 0.25)
+        c3 = c1+c2
+        self.assertTrue(equals(c3.x, 1.6))
+        self.assertTrue(equals(c3.y, 0.7))
+        self.assertTrue(equals(c3.z, 1))
+    
+    def test_color3(self):
+        c1 = Color(0.9, 0.6, 0.75)
+        c2 = Color(0.7, 0.1, 0.25)
+        c3 = c1-c2
+        self.assertTrue(equals(c3.x, 0.2))
+        self.assertTrue(equals(c3.y, 0.5))
+        self.assertTrue(equals(c3.z, 0.5))
 
+    def test_color4(self):
+        c1 = Color(0.2, 0.3, 0.4)
+        c2 = c1*2
+        self.assertTrue(equals(c2.x, 0.4))
+        self.assertTrue(equals(c2.y, 0.6))
+        self.assertTrue(equals(c2.z, 0.8))
+
+    def test_color5(self):
+        c1 = Color(1, 0.2, 0.4)
+        c2 = Color(0.9, 1, 0.1)
+        c3 = color.hadamard_product(c1, c2)
+        self.assertTrue(c3.equals(Color(0.9, 0.2, 0.04)))
 if __name__ == '__main__':
     unittest.main()
