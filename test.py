@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, pi
 import unittest
 from io import StringIO
 from base import Base
@@ -10,7 +10,7 @@ from misc import equals
 from canvas import Canvas
 import matrix
 from matrix import Matrix
-
+from transform import translate, scale, rotate_x, rotate_y, rotate_z, shear
 
 class TestPrimitive(unittest.TestCase):
     def test_point(self):
@@ -394,5 +394,105 @@ class TestMatrix(unittest.TestCase):
         C = A*B
         self.assertTrue(matrix.equals(C*B.inverse(),A))
 
+class TestTransform(unittest.TestCase):
+    def test_transform1(self):
+        t = translate(5, -3, 2)
+        p = Point(-3, 4, 5)
+        self.assertTrue(Point(2, 1, 7).equals(t*p))
+    
+    def test_transform2(self):
+        t = translate(5, -3, 2)
+        inv = t.inverse()
+        p = Point(-3, 4, 5)
+        self.assertTrue(Point(-8, 7, 3).equals(inv*p))
+    
+    def test_transform3(self):
+        t = translate(5, -3, 2)
+        v = Vector(-3, 4, 5)
+        self.assertTrue(v.equals(t*v))
+    
+    def test_scale1(self):
+        s = scale( 2, 3, 4)
+        p = Point(-4, 6, 8)
+        self.assertTrue(Point(-8, 18, 32).equals(s*p))
+
+    def test_scale2(self):
+        s = scale( 2, 3, 4)
+        v = Vector(-4, 6, 8)
+        self.assertTrue(Vector(-8, 18, 32).equals(s*v))
+
+    def test_scale3(self):
+        s = scale( 2, 3, 4)
+        inv = s.inverse()
+        v = Vector(-4, 6, 8)
+        self.assertTrue(Vector(-2, 2, 2).equals(inv*v))
+
+    def test_scale4(self):
+        s = scale(-1, 1, 1)
+        p = Point(2, 3, 4)
+        self.assertTrue(Point(-2, 3, 4).equals(s*p))
+    
+    def test_rotate1(self):
+        p = Point(0, 1, 0)
+        half_quarter = rotate_x(pi/4)
+        full_quarter = rotate_x(pi/2)
+        self.assertTrue(Point(0, sqrt(2)/2, sqrt(2)/2).equals(half_quarter*p))
+        self.assertTrue(Point(0, 0, 1).equals(full_quarter*p))
+
+
+
+    def test_rotate2(self):
+        p = Point(0, 1, 0)
+        half_quarter = rotate_x(pi/4)
+        inv = half_quarter.inverse()
+        self.assertTrue(Point(0, sqrt(2)/2, -sqrt(2)/2).equals(inv*p))
+
+
+    def test_rotate3(self):
+        p = Point(0, 0, 1)
+        half_quarter = rotate_y(pi/4)
+        full_quarter = rotate_y(pi/2)
+        self.assertTrue(Point(sqrt(2)/2, 0, sqrt(2)/2).equals(half_quarter*p))
+        self.assertTrue(Point(1, 0, 0).equals(full_quarter*p))
+
+    def test_rotate4(self):
+        p = Point(0, 1, 0)
+        half_quarter = rotate_z(pi/4)
+        full_quarter = rotate_z(pi/2)
+        self.assertTrue(Point(-sqrt(2)/2, sqrt(2)/2, 0).equals(half_quarter*p))
+        self.assertTrue(Point(-1, 0, 0).equals(full_quarter*p))
+    
+    def test_shear1(self):
+        p = Point(2, 3, 4)
+        s = shear(1, 0, 0, 0, 0, 0)
+        self.assertTrue(Point(5, 3, 4).equals(s*p))
+
+    def test_shear2(self):
+        p = Point(2, 3, 4)
+        s = shear(0, 1, 0, 0, 0, 0)
+        self.assertTrue(Point(6, 3, 4).equals(s*p))
+
+    def test_shear3(self):
+        p = Point(2, 3, 4)
+        s = shear(0, 0, 1, 0, 0, 0)
+        self.assertTrue(Point(2, 5, 4).equals(s*p))
+
+    def test_shear4(self):
+        p = Point(2, 3, 4)
+        s = shear(0, 0, 0, 1, 0, 0)
+        self.assertTrue(Point(2, 7, 4).equals(s*p))
+
+    def test_shear5(self):
+        p = Point(2, 3, 4)
+        s = shear(0, 0, 0, 0, 1, 0)
+        self.assertTrue(Point(2, 3, 6).equals(s*p))
+
+    def test_shear6(self):
+        p = Point(2, 3, 4)
+        s = shear(0, 0, 0, 0, 0, 1)
+        self.assertTrue(Point(2, 3, 7).equals(s*p))
+
+
+        
 if __name__ == '__main__':
     unittest.main()
