@@ -8,7 +8,8 @@ import color
 from color import Color
 from misc import equals
 from canvas import Canvas
-
+import matrix
+from matrix import Matrix
 
 
 class TestPrimitive(unittest.TestCase):
@@ -181,8 +182,217 @@ class TestCanvas(unittest.TestCase):
         
 
 
+class TestMatrix(unittest.TestCase):
+    def test_create1(self):
+        A =    Matrix([[1, 2, 3, 4],
+                       [5, 6, 7, 8],
+                       [9, 8, 7, 6],
+                       [5, 4, 3, 2]])
+        B =    Matrix([[1, 2, 3, 4],
+                       [5, 6, 7, 8],
+                       [9, 8, 7, 6],
+                       [5, 4, 3, 2]])
+        self.assertTrue(matrix.equals(A, B))
+                
+    def test_create2(self):
+        A =    Matrix([[1, 2, 3, 4],
+                       [5, 6, 7, 8],
+                       [9, 8, 7, 6],
+                       [5, 4, 3, 2]])
+        B =    Matrix([[2, 2, 3, 4],
+                       [5, 6, 7, 8],
+                       [9, 8, 7, 6],
+                       [5, 4, 3, 2]])
+        self.assertFalse(matrix.equals(A, B))
+    
+    def test_mul1(self):
+        A =    Matrix([[1, 2, 3, 4],
+                       [5, 6, 7, 8],
+                       [9, 8, 7, 6],
+                       [5, 4, 3, 2]])
+        B =    Matrix([[-2, 1, 2, 3],
+                       [3, 2, 1, -1],
+                       [4, 3, 6, 5],
+                       [1, 2, 7, 8]])
+        C =    Matrix([[20, 22, 50, 48],
+                       [44, 54, 114, 108],
+                       [40, 58, 110, 102],
+                       [16, 26, 46, 42]])
+        self.assertTrue(matrix.equals(C, A*B))
+    
+    def test_mul2(self):
+        A =    Matrix([[1, 2, 3, 4],
+                       [2, 4, 4, 2],
+                       [8, 6, 4, 1],
+                       [0, 0, 0, 1]])
+        b = Base(1, 2, 3, 1)
+        self.assertTrue(Base(18, 24, 33, 1).equals(A*b))
+    
+    def test_ide1(self):
+        I = Matrix([[1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 1]])
+        A =    Matrix([[1, 2, 3, 4],
+                    [5, 6, 7, 8],
+                    [9, 8, 7, 6],
+                    [5, 4, 3, 2]])
+        self.assertTrue(matrix.equals(A,A*I))
+    
+    def test_tranpose1(self):
+        A = Matrix([[0, 9, 3, 0],
+                    [9, 8, 0, 8],
+                    [1, 8, 5, 3],
+                    [0, 0, 5, 8]])
+        B = Matrix([[0, 9, 1, 0],
+                    [9, 8, 8, 0],
+                    [3, 0, 5, 5],
+                    [0, 8, 3, 8]])
+        self.assertTrue(matrix.equals(A.transpose(),B))
+                    
+    def test_det1(self):
+        A = Matrix([[1, 5],
+                    [-3, 2]])
+        self.assertEqual(A.determinant(), 17)
+    
+    def test_subm1(self):
+        A = Matrix([[1, 5, 0],
+                    [-3, 2, 7],
+                    [0, 6, -3]])
+        B = Matrix([[-3, 2],
+                    [0, 6]])
+        self.assertTrue(matrix.equals(A.submatrix(0,2), B))
+    
+    def test_subm2(self):
+        A = Matrix([[-6, 1, 1, 6],
+                    [-8, 5, 8, 6],
+                    [-1, 0, 8, 2],
+                    [-7, 1, -1, 1]])
+        B = Matrix([[-6, 1, 6],
+                    [-8, 8, 6],
+                    [-7, -1, 1]])
+        self.assertTrue(matrix.equals(A.submatrix(2, 1), B))
 
+    def test_subm3(self):
+        A = Matrix([[3, 5, 0],
+                    [2, -1, 7],
+                    [6, -1, 5]])
 
+        B = Matrix([[5, 0],
+                    [-1, 5]])
+
+        self.assertTrue(matrix.equals(A.submatrix(1, 0), B))
+
+    def test_minor1(self):
+        A = Matrix([[3, 5, 0],
+                    [2, -1, 7],
+                    [6, -1, 5]])
+
+        B = A.submatrix(1, 0)
+
+        C = Matrix([[5, 0],
+                    [-1, 5]])
+
+        self.assertTrue(matrix.equals(A.submatrix(1, 0), C))
+        self.assertEqual(B.determinant(), 25)
+        self.assertEqual(A.minor(1, 0), 25)
+    
+    def test_cofactor1(self):
+        A = Matrix([[3, 5, 0],
+                    [2, -1, -7],
+                    [6, -1, 5]])
+        self.assertEqual(A.minor(0, 0), -12)
+        self.assertEqual(A.cofactor(0, 0), -12)
+        self.assertEqual(A.minor(1, 0), 25)
+        self.assertEqual(A.cofactor(1, 0), -25)
+    
+    def test_det2(self):
+        A = Matrix([[1, 2, 6],
+                    [-5, 8, -4],
+                    [2, 6, 4]])
+        self.assertEqual(A.cofactor(0, 0), 56)
+        self.assertEqual(A.cofactor(0, 1), 12)
+        self.assertEqual(A.cofactor(0, 2), -46)
+        self.assertEqual(A.determinant(), -196)
+
+    def test_det3(self):
+        A = Matrix([[-2,  -8, 3, 5],
+                    [-3,  1, 7, 3],
+                    [1,  2, -9, 6],
+                    [-6,  7, 7, -9]])
+        self.assertEqual(A.cofactor(0, 0), 690)
+        self.assertEqual(A.cofactor(0, 1), 447)
+        self.assertEqual(A.cofactor(0, 2), 210)
+        self.assertEqual(A.cofactor(0, 3), 51)
+        self.assertEqual(A.determinant(), -4071)
+    
+    def test_inv1(self):
+        A = Matrix([[6, 4, 4, 4],
+                    [5, 5, 7, 6],
+                    [4, -9, 3, -7],
+                    [9, 1, 7, -6]]) 
+        self.assertEqual(A.determinant(), -2120)
+        self.assertTrue(A.is_invertible())
+
+    def test_inv2(self):
+        A = Matrix([[-4, 2, -2, -3,],
+                    [9, 6, 2, 6],
+                    [0, -5, 1, -5],
+                    [0, 0, 0, 0]])
+        self.assertEqual(A.determinant(), 0)
+        self.assertFalse(A.is_invertible())
+
+    def test_inv3(self):
+        A = Matrix([[-5 , 2 , 6 , -8 ],
+                    [1 , -5 , 1 , 8 ],
+                    [7 , 7 , -6 , -7 ],
+                    [1 , -3 , 7 , 4 ]])
+        B = A.inverse()
+        C = Matrix([[ 0.21805,  0.45113,  0.24060, -0.04511],
+                    [-0.80827, -1.45677, -0.44361,  0.52068],
+                    [-0.07895, -0.22368, -0.05263,  0.19737],
+                    [-0.52256, -0.81391, -0.30075,  0.30639]])
+        
+        self.assertEqual(A.determinant(), 532)
+        self.assertEqual(A.cofactor(2, 3), -160)
+        self.assertEqual(B[3][2], -160./532)
+        self.assertEqual(A.cofactor(3, 2), 105)
+        self.assertEqual(B[2][3], 105./532)
+        self.assertTrue(matrix.equals(B,C))
+        
+    def test_inv4(self):
+        A = Matrix([[ 8, -5,  9,  2],
+                    [ 7,  5,  6,  1],
+                    [-6,  0,  9,  6],
+                    [-3,  0, -9, -4]])
+        B = Matrix([[-0.15385, -0.15385, -0.28205, -0.53846],
+                    [-0.07692,  0.12308,  0.02564,  0.03077],
+                    [ 0.35897,  0.35897,  0.43590,  0.92308],
+                    [-0.69231, -0.69231, -0.76923, -1.92308]])
+        self.assertTrue(matrix.equals(A.inverse(),B))
+
+    def test_inv5(self):
+        A = Matrix([[ 9,  3,  0,  9],
+                    [-5, -2, -6, -3],
+                    [-4,  9,  6,  4],
+                    [-7,  6,  6,  2]])
+        B = Matrix([[-0.04074, -0.07778,  0.14444, -0.22222],
+                    [-0.07778,  0.03333,  0.36667, -0.33333],
+                    [-0.02901, -0.14630, -0.10926,  0.12963],
+                    [ 0.17778,  0.06667, -0.26667,  0.33333]])
+        self.assertTrue(matrix.equals(A.inverse(),B))
+
+    def test_inv6(self):
+        A = Matrix([[ 3, -9,  7,  3],
+                    [ 3, -8,  2, -9],
+                    [-4,  4,  4,  1],
+                    [-6,  5, -1,  1]])
+        B = Matrix([[8,  2, 2, 2],
+                    [3, -1, 7, 0],
+                    [7,  0, 5, 4],
+                    [6, -2, 0, 5]])
+        C = A*B
+        self.assertTrue(matrix.equals(C*B.inverse(),A))
 
 if __name__ == '__main__':
     unittest.main()
