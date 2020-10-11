@@ -8,6 +8,7 @@ from matrix import Matrix
 from ray import Ray
 from sphere import Sphere
 from intersections import Intersections, Intersection
+from transform import translate, scale
 
 
 class test_ray(unittest.TestCase):
@@ -74,6 +75,20 @@ class test_ray(unittest.TestCase):
         i2 = Intersection(-4, s)
         xs = Intersections([i1, i2])
         self.assertTrue(s.interset(r)==xs)
+        
+    def test_transform1(self):
+        r = Ray(Point(1, 2, 3), Vector(0, 1, 0))
+        m = translate(3, 4, 5)
+        r2 = r.transform(m)
+        self.assertTrue(r2.origin.equals(Point(4, 6, 8)))
+        self.assertTrue(r2.direction.equals(Vector(0, 1, 0)))
+
+    def test_transform2(self):
+        r = Ray(Point(1, 2, 3), Vector(0, 1, 0))
+        m = scale(2, 3, 4)
+        r2 = r.transform(m)
+        self.assertTrue(r2.origin.equals(Point(2, 6, 12)))
+        self.assertTrue(r2.direction.equals(Vector(0, 3, 0)))
 
 if __name__ == '__main__':
     unittest.main()

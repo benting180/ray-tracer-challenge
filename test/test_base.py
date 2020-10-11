@@ -14,7 +14,7 @@ from transform import translate, scale, rotate_x, rotate_y, rotate_z, shear
 from ray import Ray
 
 
-class TestPrimitive(unittest.TestCase):
+class test_primitive(unittest.TestCase):
     def test_point(self):
         p = Point(4, -4, 3)
         b = Base(4, -4, 3, 1)

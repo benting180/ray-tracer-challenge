@@ -8,3 +8,6 @@ class Ray:
     
     def position(self, n):
         return self.origin + self.direction * n
+
+    def transform(self, m):
+        return Ray(m*self.origin, m*self.direction)
