@@ -11,6 +11,8 @@ from canvas import Canvas
 import matrix
 from matrix import Matrix
 from transform import translate, scale, rotate_x, rotate_y, rotate_z, shear
+from ray import Ray
+
 
 class TestPrimitive(unittest.TestCase):
     def test_point(self):
@@ -491,7 +493,3 @@ class test_transform(unittest.TestCase):
         p = Point(2, 3, 4)
         s = shear(0, 0, 0, 0, 0, 1)
         self.assertTrue(Point(2, 3, 7).equals(s*p))
-
-
-if __name__ == '__main__':
-    unittest.main()
