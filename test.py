@@ -138,7 +138,7 @@ class TestPrimitive(unittest.TestCase):
         self.assertTrue(c3.equals(Color(0.9, 0.2, 0.04)))
 
 
-class TestCanvas(unittest.TestCase):
+class test_canvas(unittest.TestCase):
     def test_create1(self):
         c = Canvas(10, 20)
         self.assertTrue(equals(10, c.width))
@@ -182,7 +182,7 @@ class TestCanvas(unittest.TestCase):
         
 
 
-class TestMatrix(unittest.TestCase):
+class test_matrix(unittest.TestCase):
     def test_create1(self):
         A =    Matrix([[1, 2, 3, 4],
                        [5, 6, 7, 8],
@@ -394,7 +394,7 @@ class TestMatrix(unittest.TestCase):
         C = A*B
         self.assertTrue(matrix.equals(C*B.inverse(),A))
 
-class TestTransform(unittest.TestCase):
+class test_transform(unittest.TestCase):
     def test_transform1(self):
         t = translate(5, -3, 2)
         p = Point(-3, 4, 5)
@@ -493,6 +493,5 @@ class TestTransform(unittest.TestCase):
         self.assertTrue(Point(2, 3, 7).equals(s*p))
 
 
-        
 if __name__ == '__main__':
     unittest.main()
