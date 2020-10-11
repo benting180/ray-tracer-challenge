@@ -1,12 +1,13 @@
 from math import sqrt
 import unittest
+from io import StringIO
 from base import Base
 from point import Point
 from vector import Vector
 import color
 from color import Color
 from misc import equals
-
+from canvas import Canvas
 
 
 
@@ -134,5 +135,54 @@ class TestPrimitive(unittest.TestCase):
         c2 = Color(0.9, 1, 0.1)
         c3 = color.hadamard_product(c1, c2)
         self.assertTrue(c3.equals(Color(0.9, 0.2, 0.04)))
+
+
+class TestCanvas(unittest.TestCase):
+    def test_create1(self):
+        c = Canvas(10, 20)
+        self.assertTrue(equals(10, c.width))
+        self.assertTrue(equals(20, c.height))
+        for i in range(10):
+            for j in range(20):
+                pixel = c.pixels[j][i]
+                self.assertTrue(pixel.equals(Color(0, 0, 0)))
+    def test_write(self):
+        c = Canvas(10, 20)
+        red = Color(1, 0, 0)
+        c.write_pixel(2, 3, red)
+        self.assertTrue(c.pixel_at(2, 3).equals(red))
+    
+    def test_ppm1(self):
+        return
+        # how to unittest file write
+        # https://stackoverflow.com/a/3945057
+        # outfile = StringIO()
+        # c = Canvas(5, 3)
+        # c.to_ppm(outfile)
+        # outfile.seek(0)
+        # contents = outfile.read()
+        # self.assertEqual(contents, "P3\n5 3\n255")
+    
+    def test_ppm2(self):
+        outfile = StringIO()
+        c = Canvas(5, 3)
+        c1 = Color(1.5, 0, 0)
+        c2 = Color(0, 0.5, 0)
+        c3 = Color(-0.5, 0, 1)
+        c.write_pixel(0, 0, c1)
+        c.write_pixel(2, 1, c2)
+        c.write_pixel(4, 2, c3)
+
+        c.to_ppm(outfile)
+        outfile.seek(0)
+        contents = outfile.read()
+        self.assertEqual(contents, "P3\n5 3\n255\n255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 128 0 0 0 0 0 0 0 \n0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 \n")
+    
+        
+
+
+
+
+
 if __name__ == '__main__':
     unittest.main()
