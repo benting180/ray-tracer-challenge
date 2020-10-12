@@ -26,7 +26,7 @@ class test_sphere(unittest.TestCase):
         r = Ray(Point(0, 0, -5), Vector(0, 0, 1))
         s = Sphere()
         s.set_transform(scale(2, 2, 2))
-        xs = s.interset(r)
+        xs = s.intersect(r)
 
         self.assertEqual(xs.count, 2)
         self.assertTrue(xs[0].t, 3)

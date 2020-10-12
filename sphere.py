@@ -2,6 +2,7 @@ from point import Point
 from math import sqrt
 from matrix import Matrix
 from intersections import Intersection, Intersections
+from ray import Ray
 
 class Sphere:
     def __init__(self, origin=Point(0, 0, 0), radius=1):
@@ -12,8 +13,9 @@ class Sphere:
                                [0, 0, 1, 0],
                                [0, 0, 0, 1]])
 
-    def interset(self, ray):
-        ray2 = self.transform.inverse() * ray
+    def intersect(self, ray):
+        # ray2 = self.transform.inverse() * ray
+        ray = Ray(self.transform.inverse()*ray.origin, self.transform.inverse()*ray.direction)
         sphere2ray = ray.origin - Point(0, 0, 0)
         a = ray.direction.dot(ray.direction)
         b = 2 * ray.direction.dot(sphere2ray)

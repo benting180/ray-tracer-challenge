@@ -32,7 +32,7 @@ class Intersections:
     def hit(self):
         result = None
         for x in self.ls:
-            if x.t >= 0:
+            if x.t > 0:
                 if result is None:
                     result = x
                 elif x.t < result.t:
