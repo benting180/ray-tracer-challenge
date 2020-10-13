@@ -37,3 +37,18 @@ def shear(xy, xz, yx, yz, zx, zy):
                     [yx, 1, yz, 0],
                     [zx, zy, 1, 0],
                     [0, 0, 0, 1]])
+
+def view_transform(pfrom, pto, vup):
+    forward = (pto - pfrom).normalize()
+    uvup = vup.normalize()
+    left = forward.cross(uvup)
+    true_up = left.cross(forward)
+
+    orientation = Matrix([
+        [left.x, left.y, left.z, 0],
+        [true_up.x, true_up.y, true_up.z, 0],
+        [-forward.x, -forward.y, -forward.z, 0],
+        [0, 0, 0, 1]
+    ])
+    t = translate(-pfrom.x, -pfrom.y, -pfrom.z)
+    return orientation * t
