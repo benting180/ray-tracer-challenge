@@ -45,7 +45,8 @@ class Camera:
     def render(self, world):
         image = Canvas(self.hsize, self.vsize)
         for j in range(self.vsize-1):
-            for i in range(self.vsize-1):
+            print(j)
+            for i in range(self.hsize-1):
                 ray = self.ray_for_pixel(i, j)
                 color = world.color_at(ray)
                 image.write_pixel(i, j, color)
