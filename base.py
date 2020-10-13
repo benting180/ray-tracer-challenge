@@ -21,7 +21,12 @@ class Base:
         return Base(-self.x, -self.y, -self.z, -self.w)
     
     def __mul__(self, a):
-        return Base(self.x*a, self.y*a, self.z*a, self.w*a)
+        if isinstance(a, Base):
+            return Base(self.x*a.x, self.y*a.y, self.z*a.z, self.w*a.w)
+        elif isinstance(a, int) or isinstance(a, float):
+            return Base(self.x*a, self.y*a, self.z*a, self.w*a)
+        else:
+            raise TypeError
     
     def __rmul__(self, a):
         return self.__mul__(a)
@@ -50,3 +55,6 @@ class Base:
                 equals(self.z, v.z) and \
                 equals(self.w, v.w)
 
+    def reflect(self, n):
+        vin = self
+        return vin - n * 2 * vin.dot(n)

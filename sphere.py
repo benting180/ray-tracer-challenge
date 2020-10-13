@@ -3,6 +3,8 @@ from math import sqrt
 from matrix import Matrix
 from intersections import Intersection, Intersections
 from ray import Ray
+from material import Material
+
 
 class Sphere:
     def __init__(self, origin=Point(0, 0, 0), radius=1):
@@ -12,6 +14,7 @@ class Sphere:
                                [0, 1, 0, 0],
                                [0, 0, 1, 0],
                                [0, 0, 0, 1]])
+        self.material = Material()
 
     def intersect(self, ray):
         # ray2 = self.transform.inverse() * ray
@@ -37,3 +40,11 @@ class Sphere:
 
     def set_transform(self, t):
         self.transform = t
+    
+    def normal_at(self, world_point):
+        obj_point = self.transform.inverse() * world_point
+        obj_normal = obj_point - Point(0, 0, 0)
+        world_normal = self.transform.inverse().transpose() * obj_normal
+        # print(world_normal.w)
+        world_normal.w = 0
+        return world_normal.normalize()

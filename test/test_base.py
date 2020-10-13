@@ -138,6 +138,18 @@ class test_primitive(unittest.TestCase):
         c2 = Color(0.9, 1, 0.1)
         c3 = color.hadamard_product(c1, c2)
         self.assertTrue(c3.equals(Color(0.9, 0.2, 0.04)))
+    
+    def test_reflect1(self):
+        v = Vector(1, -1, 0)
+        n = Vector(0, 1, 0)
+        r = v.reflect(n)
+        self.assertTrue(Vector(1, 1, 0).equals(r))
+    
+    def test_reflect2(self):
+        v = Vector(0, -1, 0)
+        n = Vector(sqrt(2)/2, sqrt(2)/2, 0)
+        r = v.reflect(n)
+        self.assertTrue(Vector(1, 0, 0).equals(r))
 
 
 class test_canvas(unittest.TestCase):
