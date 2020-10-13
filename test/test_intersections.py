@@ -1,6 +1,10 @@
 import unittest
 from intersections import Intersection, Intersections
 from sphere import Sphere
+from ray import Ray
+from point import Point
+from vector import Vector
+
 class test_intersections(unittest.TestCase):
     def test_int1(self):
         s = Sphere()
@@ -50,4 +54,34 @@ class test_intersections(unittest.TestCase):
         xs = Intersections([i1, i2, i3, i4])
         i = xs.hit()
         self.assertTrue(i==i4)
+    
+    def test_prepare1(self):
+        r = Ray(Point(0, 0, -5), Vector(0, 0, 1))
+        s = Sphere()
+        i = Intersection(4, s)
+        comps = i.prepare_computations(r)
 
+        self.assertEqual(i.t, comps.t)
+        self.assertTrue(i.obj==comps.obj)
+        self.assertTrue(Point(0, 0, -1).equals(comps.point))
+        self.assertTrue(Vector(0, 0, -1).equals(comps.eyev))
+        self.assertTrue(Vector(0, 0, -1).equals(comps.normalv))
+
+    def test_prepare2(self):
+        r = Ray(Point(0, 0, -5), Vector(0, 0, 1))
+        s = Sphere()
+        i = Intersection(4, s)
+        comps = i.prepare_computations(r)
+        self.assertFalse(comps.inside)
+
+    def test_prepare3(self):
+        r = Ray(Point(0, 0, 0), Vector(0, 0, 1))
+        s = Sphere()
+        i = Intersection(1, s)
+        comps = i.prepare_computations(r)
+
+        self.assertTrue(comps.inside)
+        self.assertTrue(Point(0, 0, 1).equals(comps.point))
+        self.assertTrue(Vector(0, 0, -1).equals(comps.eyev))
+        self.assertTrue(Vector(0, 0, -1).equals(comps.normalv))
+        

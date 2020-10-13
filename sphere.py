@@ -35,8 +35,11 @@ class Sphere:
     
     def __eq__(self, s):
         if isinstance(s, Sphere):
-            return (self.origin == s.origin and
-                    self.radius == s.radius)
+            return (
+                self.origin == s.origin and
+                self.radius == s.radius and
+                self.material == s.material
+            )
 
     def set_transform(self, t):
         self.transform = t
