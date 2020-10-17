@@ -27,10 +27,11 @@ class Material:
             m.shininess == self.shininess
         )
     
-    def lighting(self, light, point, eyev, normalv):
+    def lighting(self, light, point, eyev, normalv, in_shadow):
         effective_color = self.color * light.intensity
         ambient = effective_color * self.ambient
-
+        if in_shadow:
+            return ambient
         lightv = (light.position-point).normalize()
         light_dot_normal = lightv.dot(normalv)
         if light_dot_normal < 0:

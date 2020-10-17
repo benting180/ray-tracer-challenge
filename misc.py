@@ -1,6 +1,6 @@
+EPSILON = 0.00001
 def equals(a, b):
-    epsilon = 0.00001
-    if abs(a-b) < epsilon:
+    if abs(a-b) < EPSILON:
         return True
     else:
         return False

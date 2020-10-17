@@ -4,6 +4,8 @@ from sphere import Sphere
 from ray import Ray
 from point import Point
 from vector import Vector
+from misc import EPSILON
+from transform import translate
 
 class test_intersections(unittest.TestCase):
     def test_int1(self):
@@ -84,4 +86,14 @@ class test_intersections(unittest.TestCase):
         self.assertTrue(Point(0, 0, 1).equals(comps.point))
         self.assertTrue(Vector(0, 0, -1).equals(comps.eyev))
         self.assertTrue(Vector(0, 0, -1).equals(comps.normalv))
+    
+    def test_offset1(self):
+        r = Ray(Point(0, 0, -5), Vector(0, 0, 1))
+        shape = Sphere()
+        shape.transform = translate(0, 0, 1)
+        i = Intersection(5, shape)
+        comps = i.prepare_computations(r)
+        self.assertTrue(comps.over_point.z < -EPSILON/2)
+        self.assertTrue(comps.point.z > comps.over_point.z)
+
         

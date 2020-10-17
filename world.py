@@ -5,6 +5,7 @@ from color import Color
 from material import Material
 from transform import scale
 from intersections import Intersections
+from ray import Ray
 
 class World:
     def __init__(self, light=Light(Point(-10, 10, -10), Color(1, 1, 1))):
@@ -43,7 +44,8 @@ class World:
 
     def shade_hit(self, comps):
         m = comps.obj.material
-        return m.lighting(self.light, comps.point, comps.eyev, comps.normalv)
+        is_shadowed = self.is_shadowed(comps.over_point)
+        return m.lighting(self.light, comps.over_point, comps.eyev, comps.normalv, is_shadowed)
     
     def color_at(self, ray):
         intersections = self.intersect(ray)
@@ -60,5 +62,16 @@ class World:
         #     comps = intersections[0].prepare_computations(ray)
         #     color = self.shade_hit(comps)
         # return color
+    
+    def is_shadowed(self, point):
+        v = (self.light.position - point)
+        distance = v.magnitude()
+        direction = v.normalize()
 
-
+        r = Ray(point, direction)
+        intersections = self.intersect(r)
+        h = intersections.hit()
+        if h is not None and h.t < distance:
+            return True
+        else:
+            return False

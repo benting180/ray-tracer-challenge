@@ -22,7 +22,8 @@ class TestMaterial(unittest.TestCase):
         eyev = Vector(0, 0, -1)
         normalv = Vector(0, 0, -1)
         light = Light(Point(0, 0, -10), Color(1, 1, 1))
-        result = m.lighting(light, position, eyev, normalv)
+        in_shadow = False
+        result = m.lighting(light, position, eyev, normalv, in_shadow)
         self.assertTrue(Color(1.9, 1.9, 1.9).equals(result))
 
     def test_material3(self):
@@ -32,7 +33,8 @@ class TestMaterial(unittest.TestCase):
         eyev = Vector(0, sqrt(2)/2, -sqrt(2)/2)
         normalv = Vector(0, 0, -1)
         light = Light(Point(0, 0, -10), Color(1, 1, 1))
-        result = m.lighting(light, position, eyev, normalv)
+        in_shadow = False
+        result = m.lighting(light, position, eyev, normalv, in_shadow)
         self.assertTrue(Color(1.0, 1.0, 1.0).equals(result))
     
     def test_material4(self):
@@ -42,7 +44,8 @@ class TestMaterial(unittest.TestCase):
         eyev = Vector(0, 0, -1)
         normalv = Vector(0, 0, -1)
         light = Light(Point(0, 10, -10), Color(1, 1, 1))
-        result = m.lighting(light, position, eyev, normalv)
+        in_shadow = False
+        result = m.lighting(light, position, eyev, normalv, in_shadow)
         self.assertTrue(Color(0.7364, 0.7364, 0.7364).equals(result))
     
     def test_material5(self):
@@ -52,7 +55,8 @@ class TestMaterial(unittest.TestCase):
         eyev = Vector(0, -sqrt(2)/2, -sqrt(2)/2)
         normalv = Vector(0, 0, -1)
         light = Light(Point(0, 10, -10), Color(1, 1, 1))
-        result = m.lighting(light, position, eyev, normalv)
+        in_shadow = False
+        result = m.lighting(light, position, eyev, normalv, in_shadow)
         self.assertTrue(Color(1.6364, 1.6364, 1.6364).equals(result))
     
     def test_material6(self):
@@ -62,7 +66,16 @@ class TestMaterial(unittest.TestCase):
         eyev = Vector(0, 0, -1)
         normalv = Vector(0, 0, -1)
         light = Light(Point(0, 0, 10), Color(1, 1, 1))
-        result = m.lighting(light, position, eyev, normalv)
+        in_shadow = False
+        result = m.lighting(light, position, eyev, normalv, in_shadow)
         self.assertTrue(Color(0.1, 0.1, 0.1).equals(result))
 
+    def test_shadow7(self):
+        eyev = Vector(0, 0, -1)
+        normalv = Vector(0, 0, -1)
+        light = Light(Point(0, 0, -10), Color(1, 1, 1))
+        in_shadow = True
+        m = Material()
+        result = m.lighting(light, Point(0, 0, 0), eyev, normalv, in_shadow)
+        self.assertTrue(result.equals(Color(0.1, 0.1, 0.1)))
         
