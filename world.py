@@ -28,10 +28,10 @@ class World:
 
         ls = []
         for obj in self.objs:
-            interestion = obj.intersect(ray)
-            if interestion.count != 0:
-                ls.append(interestion[0])
-                ls.append(interestion[1])
+            intersections = obj.intersect(ray)
+            if intersections.count != 0:
+                for i in range(intersections.count):
+                    ls.append(intersections[i])
         
         n = len(ls)
         for i in range(1, n):

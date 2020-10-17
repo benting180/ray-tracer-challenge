@@ -4,21 +4,18 @@ from matrix import Matrix
 from intersections import Intersection, Intersections
 from ray import Ray
 from material import Material
+from shape import Shape
 
-
-class Sphere:
+class Sphere(Shape):
     def __init__(self, origin=Point(0, 0, 0), radius=1):
+        Shape.__init__(self)
         self.origin = origin
         self.radius = radius
-        self.transform = Matrix([[1, 0, 0, 0],
-                               [0, 1, 0, 0],
-                               [0, 0, 1, 0],
-                               [0, 0, 0, 1]])
-        self.material = Material()
+        self.parent = Shape
 
-    def intersect(self, ray):
+    def local_intersect(self, ray):
         # ray2 = self.transform.inverse() * ray
-        ray = Ray(self.transform.inverse()*ray.origin, self.transform.inverse()*ray.direction)
+        # ray = Ray(self.transform.inverse()*ray.origin, self.transform.inverse()*ray.direction)
         sphere2ray = ray.origin - Point(0, 0, 0)
         a = ray.direction.dot(ray.direction)
         b = 2 * ray.direction.dot(sphere2ray)
@@ -40,14 +37,7 @@ class Sphere:
                 self.radius == s.radius and
                 self.material == s.material
             )
-
-    def set_transform(self, t):
-        self.transform = t
     
-    def normal_at(self, world_point):
-        obj_point = self.transform.inverse() * world_point
-        obj_normal = obj_point - Point(0, 0, 0)
-        world_normal = self.transform.inverse().transpose() * obj_normal
-        # print(world_normal.w)
-        world_normal.w = 0
-        return world_normal.normalize()
+    def local_normal_at(self, local_point):
+        local_normal = local_point - Point(0, 0, 0)
+        return local_normal

@@ -8,6 +8,7 @@ from transform import translate, scale, rotate_z
 from ray import Ray
 from math import sqrt, pi
 from material import Material
+from shape import Shape
 
 class test_sphere(unittest.TestCase):
     def test_transform1(self):
@@ -77,3 +78,7 @@ class test_sphere(unittest.TestCase):
         m.ambient = 1
         s.material = m
         self.assertTrue(s.material==m)
+
+    def test_type1(self):
+        s = Sphere()
+        self.assertEqual(s.parent, Shape)
