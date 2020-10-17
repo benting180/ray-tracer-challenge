@@ -32,7 +32,7 @@ class Material:
         if self.pattern is None:
             color = self.color
         else:
-            color = self.pattern.stripe_at_object(obj, point)
+            color = self.pattern.pattern_at_shape(obj, point)
         effective_color = color * light.intensity
         ambient = effective_color * self.ambient
         if in_shadow:
