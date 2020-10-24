@@ -7,6 +7,9 @@ import unittest
 from math import sqrt
 from pattern import StripePattern
 from sphere import Sphere
+from plane import Plane
+from ray import Ray
+from intersections import Intersection
 
 class TestMaterial(unittest.TestCase):
     def test_material1(self):
@@ -95,4 +98,16 @@ class TestMaterial(unittest.TestCase):
         c2 = m.lighting(Sphere(), light, Point(1.1, 0, 0), eyev, normalv, False)
         self.assertTrue(c1.equals(Color(1, 1, 1)))
         self.assertTrue(c2.equals(Color(0, 0, 0)))
+
+    def test_reflective1(self):
+        m = Material()
+        self.assertEqual(m.reflective, 0.0)
+    
+    def test_reflective2(self):
+        shape = Plane()
+        r = Ray(Point(0, 1, -1), Vector(0, -sqrt(2)/2, sqrt(2)/2))
+        i = Intersection(sqrt(2), shape)
+        comps = i.prepare_computations(r)
+        self.assertTrue(Vector(0, sqrt(2)/2, sqrt(2)/2).equals(comps.reflectv))
+
         

@@ -1,7 +1,7 @@
 from misc import EPSILON
 
 class Comps:
-    def __init__(self, t, obj, point, eyev, normalv, inside, over_point):
+    def __init__(self, t, obj, point, eyev, normalv, inside, over_point, reflectv):
         self.t = t
         self.obj = obj
         self.point = point
@@ -9,6 +9,7 @@ class Comps:
         self.normalv = normalv
         self.inside = inside
         self.over_point = over_point
+        self.reflectv = reflectv
 
 class Intersection:
     def __init__(self, t, obj):
@@ -29,13 +30,15 @@ class Intersection:
         eyev = -ray.direction
         normalv = obj.normal_at(point)
         over_point = point + normalv * EPSILON
+        
         # print(t, normalv, eyev, normalv.dot(eyev))
         if normalv.dot(eyev) < 0:
             inside = True
             normalv = -normalv
         else:
             inside = False
-        comps = Comps(t, obj, point, eyev, normalv, inside, over_point)
+        reflectv = ray.direction.reflect(normalv)
+        comps = Comps(t, obj, point, eyev, normalv, inside, over_point, reflectv)
         return comps
 
 class Intersections:

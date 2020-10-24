@@ -9,6 +9,8 @@ from point import Point
 from ray import Ray
 from vector import Vector
 from intersections import Intersection
+from plane import Plane
+from math import sqrt
 
 class TestWorld(unittest.TestCase):
     def test_world1(self):
@@ -126,3 +128,65 @@ class TestWorld(unittest.TestCase):
         comps = i.prepare_computations(r)
         c = w.shade_hit(comps)
         self.assertTrue(Color(0.1, 0.1, 0.1).equals(c))
+    
+    def test_reflect1(self):
+        w = World()
+        r = Ray(Point(0, 0, 0), Vector(0, 0, 1))
+        shape = w.objs[1]
+        shape.material.abmient = 1
+        i = Intersection(1, shape)
+        comps = i.prepare_computations(r)
+        color = w.reflected_color(comps)
+        self.assertTrue(Color(0, 0, 0).equals(color))
+    
+    def test_reflect1(self):
+        w = World()
+        shape = Plane()
+        shape.material.reflective = 0.5
+        shape.set_transform(translate(0.0, -1.0, 0.0))
+        w.objs.append(shape)
+        r = Ray(Point(0.0, 0.0, -3.0), Vector(0.0, -sqrt(2)/2, sqrt(2)/2))
+        i = Intersection(sqrt(2), shape)
+        comps = i.prepare_computations(r)
+        color = w.reflected_color(comps)
+        # print(color)
+        self.assertTrue(Color(0.19032, 0.2379, 0.14274).equals(color))
+        # self.assertTrue(Color(0.190332, 0.237915, 0.1427491).equals(color))
+    
+    def test_shade_hit(self):
+        w = World()
+        shape = Plane()
+        shape.material.reflective = 0.5
+        shape.set_transform(translate(0.0, -1.0, 0.0))
+        w.objs.append(shape)
+        r = Ray(Point(0.0, 0.0, -3.0), Vector(0.0, -sqrt(2)/2, sqrt(2)/2))
+        i = Intersection(sqrt(2), shape)
+        comps = i.prepare_computations(r)
+        color = w.shade_hit(comps)
+        print(color)
+        self.assertTrue(Color(0.87677, 0.92436, 0.82918).equals(color))
+    
+    def test_mutually_reflective_surfaces(self):
+        w = World()
+        w.light = Light(Point(0, 0, 0), Color(1, 1, 1))
+        lower = Plane()
+        lower.material.reflective = 1.0
+        lower.set_transform(translate(0, -1, 0))
+
+        up = Plane()
+        up.material.reflective = 1.0
+        up.set_transform(translate(0, 1, 0))
+
+        r = Ray(Point(0, 0, 0), Vector(0, 1, 0))
+        color = w.color_at(r)
+
+    def test_maximum_recursive_depth(self):
+        w = World()
+        shape = Plane()
+        shape.material.reflective = 0.5
+        shape.set_transform(translate(0, -1, 0))
+        r = Ray(Point(0, 0, -3), Vector(0, -sqrt(2)/2, sqrt(2)/2))
+        i = Intersection(sqrt(2), shape)
+        comps = i.prepare_computations(r)
+        color = w.reflected_color(comps, 0)
+        self.assertTrue(Color(0, 0, 0).equals(color))

@@ -7,6 +7,7 @@ from transform import scale
 from intersections import Intersections
 from ray import Ray
 
+
 class World:
     def __init__(self, light=Light(Point(-10, 10, -10), Color(1, 1, 1))):
         self.light = light
@@ -42,19 +43,25 @@ class World:
         
         return Intersections(ls)
 
-    def shade_hit(self, comps):
+    def shade_hit(self, comps, remaining=2):
+        if remaining == 0:
+            return Color(0, 0, 0)
         m = comps.obj.material
         is_shadowed = self.is_shadowed(comps.over_point)
-        return m.lighting(comps.obj, self.light, comps.over_point, comps.eyev, comps.normalv, is_shadowed)
+        surface = m.lighting(comps.obj, self.light, comps.over_point, comps.eyev, comps.normalv, is_shadowed)
+        reflected = self.reflected_color(comps, remaining)
+        return surface + reflected
     
-    def color_at(self, ray):
+    def color_at(self, ray, remaining=2):
+        if remaining == 0:
+            return Color(0, 0, 0)
         intersections = self.intersect(ray)
         intersection = intersections.hit()
         if intersection is None:
             color = Color(0, 0, 0)
         else:
             comps = intersection.prepare_computations(ray)
-            color = self.shade_hit(comps)
+            color = self.shade_hit(comps, remaining)
         return color
         # if intersections.count == 0:
         #     color = Color(0, 0, 0)
@@ -75,3 +82,13 @@ class World:
             return True
         else:
             return False
+    
+    def reflected_color(self, comps, remaining=4):
+        if remaining <= 0:
+            return Color(0, 0, 0)
+        if comps.obj.material.reflective == 0:
+            return Color(0, 0, 0)
+        reflect_ray = Ray(comps.over_point, comps.reflectv)
+        color = self.color_at(reflect_ray, remaining - 1)
+        return comps.obj.material.reflective * color
+
