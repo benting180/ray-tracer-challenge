@@ -6,7 +6,7 @@ from material import Material
 from transform import scale
 from intersections import Intersections
 from ray import Ray
-
+from math import sqrt
 
 class World:
     def __init__(self, light=Light(Point(-10, 10, -10), Color(1, 1, 1))):
@@ -92,3 +92,32 @@ class World:
         color = self.color_at(reflect_ray, remaining - 1)
         return comps.obj.material.reflective * color
 
+    def refracted_color(self, comps, remaining):
+        if remaining == 0:
+            return Color(0, 0, 0)
+        if comps.obj.material.transparency == 0:
+            return Color(0, 0, 0)
+
+        n_ratio = comps.n1 / comps.n2
+        cos_i = comps.eyev.dot(comps.normalv)
+
+        # sin_i = sqrt(1-cos_i*cos_i)
+        # sin_t = n_ratio * sin_i
+        # if sin_t > 1:
+        #     return Color(0, 0, 0)
+        # cos_t = sqrt(1-sin_t*sin_t)
+
+        sin2_t = n_ratio**2 * (1-cos_i**2)
+        if sin2_t > 1:
+            return Color(0, 0, 0)
+        cos_t = sqrt(1.0 - sin2_t)
+
+        direction = comps.normalv * (n_ratio * cos_i - cos_t) - \
+                    comps.eyev * n_ratio
+
+        refract_ray = Ray(comps.under_point, direction)
+        # print(refract_ray.direction)
+
+        color = self.color_at(refract_ray, remaining-1) * comps.obj.material.transparency
+        
+        return color

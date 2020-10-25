@@ -54,6 +54,9 @@ class Base:
                 equals(self.y, v.y) and \
                 equals(self.z, v.z) and \
                 equals(self.w, v.w)
+    
+    def __eq__(self, v):
+        return self.equals(v)
 
     def reflect(self, n):
         vin = self

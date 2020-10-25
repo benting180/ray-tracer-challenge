@@ -37,7 +37,15 @@ class Sphere(Shape):
                 self.radius == s.radius and
                 self.material == s.material
             )
+        else:
+            return False
     
     def local_normal_at(self, local_point):
         local_normal = local_point - Point(0, 0, 0)
         return local_normal
+
+class GlassSphere(Sphere):
+    def __init__(self):
+        Sphere.__init__(self)
+        self.material.transparency = 1.0
+        self.material.refractive_index = 1.5

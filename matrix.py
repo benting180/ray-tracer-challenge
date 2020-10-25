@@ -2,6 +2,14 @@ from base import Base
 import misc
 import copy
 
+def I():
+    I = Matrix([
+            [1,0,0,0],
+            [0,1,0,0],
+            [0,0,1,0],
+            [0,0,0,1]
+        ])
+    return I
 
 class Matrix:
     def __init__(self, matrix):

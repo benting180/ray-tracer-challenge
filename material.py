@@ -9,7 +9,9 @@ class Material:
         diffuse=0.9,
         specular=0.9,
         shininess=200.,
-        reflective=0.0
+        reflective=0.0,
+        transparency=0.0,
+        refractive_index=1.0
     ):
         self.color = color
         self.ambient = ambient
@@ -18,6 +20,8 @@ class Material:
         self.shininess = shininess
         self.pattern = None
         self.reflective = reflective
+        self.transparency = transparency
+        self.refractive_index = refractive_index
     
     def __eq__(self, m):
         if not isinstance(m, Material):
@@ -27,7 +31,9 @@ class Material:
             m.ambient == self.ambient and
             m.diffuse == self.diffuse and
             m.specular == self.specular and
-            m.shininess == self.shininess
+            m.shininess == self.shininess and
+            m.transparency == self.transparency and
+            m.refractive_index == self.refractive_index
         )
     
     def lighting(self, obj, light, point, eyev, normalv, in_shadow):

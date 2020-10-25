@@ -1,7 +1,8 @@
 import unittest
-from sphere import Sphere
+from sphere import Sphere, GlassSphere
 import matrix
-from matrix import Matrix
+
+from matrix import Matrix, I
 from point import Point
 from vector import Vector
 from transform import translate, scale, rotate_z
@@ -82,3 +83,11 @@ class test_sphere(unittest.TestCase):
     def test_type1(self):
         s = Sphere()
         self.assertEqual(s.parent, Shape)
+
+class TestGlassSphere(unittest.TestCase):
+    def test_default1(self):
+        s = GlassSphere()
+        print(s.transform)
+        self.assertTrue(matrix.equals(I(), s.transform))
+        self.assertEqual(s.material.transparency, 1.0)
+        self.assertEqual(s.material.refractive_index, 1.5)

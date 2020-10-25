@@ -111,3 +111,7 @@ class TestMaterial(unittest.TestCase):
         self.assertTrue(Vector(0, sqrt(2)/2, sqrt(2)/2).equals(comps.reflectv))
 
         
+    def test_index1(self):
+        m = Material()
+        self.assertEqual(m.transparency, 0.0)
+        self.assertEqual(m.refractive_index, 1.0)

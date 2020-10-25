@@ -1,7 +1,7 @@
 from misc import EPSILON
 
 class Comps:
-    def __init__(self, t, obj, point, eyev, normalv, inside, over_point, reflectv):
+    def __init__(self, t, obj, point, eyev, normalv, inside, over_point, under_point, reflectv, n1=1.0, n2=1.0):
         self.t = t
         self.obj = obj
         self.point = point
@@ -9,37 +9,10 @@ class Comps:
         self.normalv = normalv
         self.inside = inside
         self.over_point = over_point
+        self.under_point = under_point
         self.reflectv = reflectv
-
-class Intersection:
-    def __init__(self, t, obj):
-        self.t = t
-        self.obj = obj
-    
-    def __eq__(self, i):
-        return (
-            isinstance(i, Intersection) and
-            self.t == i.t and
-            self.obj == i.obj
-        )
-    
-    def prepare_computations(self, ray):
-        t = self.t
-        obj = self.obj
-        point = ray.position(t)
-        eyev = -ray.direction
-        normalv = obj.normal_at(point)
-        over_point = point + normalv * EPSILON
-        
-        # print(t, normalv, eyev, normalv.dot(eyev))
-        if normalv.dot(eyev) < 0:
-            inside = True
-            normalv = -normalv
-        else:
-            inside = False
-        reflectv = ray.direction.reflect(normalv)
-        comps = Comps(t, obj, point, eyev, normalv, inside, over_point, reflectv)
-        return comps
+        self.n1 = n1
+        self.n2 = n2
 
 class Intersections:
     def __init__(self, ls):
@@ -68,5 +41,65 @@ class Intersections:
                 elif x.t < result.t:
                     result = x
         return result
+
+
+class Intersection:
+    def __init__(self, t, obj):
+        self.t = t
+        self.obj = obj
+    
+    def __eq__(self, i):
+        return (
+            isinstance(i, Intersection) and
+            self.t == i.t and
+            self.obj == i.obj
+        )
+
+
+    
+    def prepare_computations(self, ray, xs=Intersections(ls=[])):
+        t = self.t
+        obj = self.obj
+        point = ray.position(t)
+        eyev = -ray.direction
+        normalv = obj.normal_at(point)
+        over_point = point + normalv * EPSILON
+        under_point = point - normalv * EPSILON
+        
+        # print(t, normalv, eyev, normalv.dot(eyev))
+        if normalv.dot(eyev) < 0:
+            inside = True
+            normalv = -normalv
+        else:
+            inside = False
+        reflectv = ray.direction.reflect(normalv)
+
+        containers = []
+        comps = Comps(t, obj, point, eyev, normalv, inside, over_point, under_point, reflectv)
+        for j, i in enumerate(xs.ls):
+            if i == self:
+                if len(containers) == 0:
+                    comps.n1 = 1.0
+                else:
+                    comps.n1 = containers[-1].material.refractive_index
+
+            found = False
+            for element in containers:
+                if i.obj == element:
+                    containers.remove(element)
+                    found = True
+                    # break
+            if not found:
+                containers.append(i.obj)
+            
+            if i == self:
+                if len(containers) == 0:
+                    comps.n2 = 1.0
+                else:
+                    comps.n2 = containers[-1].material.refractive_index
+                break
+            
+        return comps
+
 
     
