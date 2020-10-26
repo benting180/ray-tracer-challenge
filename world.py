@@ -11,9 +11,10 @@ from math import sqrt
 class World:
     def __init__(self, light=Light(Point(-10, 10, -10), Color(1, 1, 1))):
         self.light = light
-        m1 = Material(Color(0.8, 1.0, 0.6), 0.1, 0.7, 0.2)
         s1 = Sphere()
-        s1.material = m1
+        s1.material.color = Color(0.8, 1.0, 0.6)
+        s1.material.diffuse = 0.7
+        s1.material.specular = 0.2
 
         s2 = Sphere()
         t2 = scale(0.5, 0.5, 0.5)
@@ -43,7 +44,7 @@ class World:
         
         return Intersections(ls)
 
-    def shade_hit(self, comps, remaining=2):
+    def shade_hit(self, comps, remaining=4):
         if remaining == 0:
             return Color(0, 0, 0)
         m = comps.obj.material
@@ -53,17 +54,15 @@ class World:
         refracted = self.refracted_color(comps, remaining)
         return surface + reflected + refracted
     
-    def color_at(self, ray, remaining=2):
+    def color_at(self, ray, remaining=4):
         if remaining == 0:
             return Color(0, 0, 0)
         intersections = self.intersect(ray)
         intersection = intersections.hit()
-        # print("ray: ", ray.origin, ray.direction, " hit t:", intersection.t)
-
         if intersection is None:
             color = Color(0, 0, 0)
         else:
-            comps = intersection.prepare_computations(ray)
+            comps = intersection.prepare_computations(ray, intersections)
             color = self.shade_hit(comps, remaining)
         return color
         # if intersections.count == 0:
@@ -104,12 +103,6 @@ class World:
         n_ratio = comps.n1 / comps.n2
         cos_i = comps.eyev.dot(comps.normalv)
 
-        # sin_i = sqrt(1-cos_i*cos_i)
-        # sin_t = n_ratio * sin_i
-        # if sin_t > 1:
-        #     return Color(0, 0, 0)
-        # cos_t = sqrt(1-sin_t*sin_t)
-
         sin2_t = n_ratio*n_ratio * (1-cos_i*cos_i)
         if sin2_t > 1:
             return Color(0, 0, 0)
@@ -119,12 +112,10 @@ class World:
                     comps.eyev * n_ratio
 
         refract_ray = Ray(comps.under_point, direction)
-        # print("Pos:", comps.under_point, " point to", direction)
 
         temp1 = self.color_at(refract_ray, remaining-1)
         temp2 = comps.obj.material.transparency
-        # print(temp1)
-        # print(temp2)
         color = temp1 * temp2
         
         return color
+
