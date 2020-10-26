@@ -50,13 +50,16 @@ class World:
         is_shadowed = self.is_shadowed(comps.over_point)
         surface = m.lighting(comps.obj, self.light, comps.over_point, comps.eyev, comps.normalv, is_shadowed)
         reflected = self.reflected_color(comps, remaining)
-        return surface + reflected
+        refracted = self.refracted_color(comps, remaining)
+        return surface + reflected + refracted
     
     def color_at(self, ray, remaining=2):
         if remaining == 0:
             return Color(0, 0, 0)
         intersections = self.intersect(ray)
         intersection = intersections.hit()
+        # print("ray: ", ray.origin, ray.direction, " hit t:", intersection.t)
+
         if intersection is None:
             color = Color(0, 0, 0)
         else:
@@ -107,17 +110,21 @@ class World:
         #     return Color(0, 0, 0)
         # cos_t = sqrt(1-sin_t*sin_t)
 
-        sin2_t = n_ratio**2 * (1-cos_i**2)
+        sin2_t = n_ratio*n_ratio * (1-cos_i*cos_i)
         if sin2_t > 1:
             return Color(0, 0, 0)
-        cos_t = sqrt(1.0 - sin2_t)
 
+        cos_t = sqrt(1.0 - sin2_t)
         direction = comps.normalv * (n_ratio * cos_i - cos_t) - \
                     comps.eyev * n_ratio
 
         refract_ray = Ray(comps.under_point, direction)
-        # print(refract_ray.direction)
+        # print("Pos:", comps.under_point, " point to", direction)
 
-        color = self.color_at(refract_ray, remaining-1) * comps.obj.material.transparency
+        temp1 = self.color_at(refract_ray, remaining-1)
+        temp2 = comps.obj.material.transparency
+        # print(temp1)
+        # print(temp2)
+        color = temp1 * temp2
         
         return color

@@ -87,7 +87,6 @@ class test_sphere(unittest.TestCase):
 class TestGlassSphere(unittest.TestCase):
     def test_default1(self):
         s = GlassSphere()
-        print(s.transform)
         self.assertTrue(matrix.equals(I(), s.transform))
         self.assertEqual(s.material.transparency, 1.0)
         self.assertEqual(s.material.refractive_index, 1.5)

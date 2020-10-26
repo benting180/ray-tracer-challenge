@@ -9,7 +9,7 @@ class Base:
         self.w = w
     
     def __str__(self):
-        return "Base: ({}, {}, {}, {})".format(self.x, self.y, self.z, self.w)
+        return "({}, {}, {}, {})".format(self.x, self.y, self.z, self.w)
 
     def __add__(self, v):
         return Base(self.x+v.x, self.y+v.y, self.z+v.z, self.w+v.w)
