@@ -35,7 +35,7 @@ class Intersections:
     def hit(self):
         result = None
         for x in self.ls:
-            if x.t > 0:
+            if x.t >= 0:
                 if result is None:
                     result = x
                 elif x.t < result.t:
@@ -63,8 +63,6 @@ class Intersection:
         point = ray.position(t)
         eyev = -ray.direction
         normalv = obj.normal_at(point)
-        over_point = point + normalv * EPSILON
-        under_point = point - normalv * EPSILON
         
         # print(t, normalv, eyev, normalv.dot(eyev))
         if normalv.dot(eyev) < 0:
@@ -73,6 +71,9 @@ class Intersection:
         else:
             inside = False
         reflectv = ray.direction.reflect(normalv)
+
+        over_point = point + normalv * EPSILON
+        under_point = point - normalv * EPSILON
 
         containers = []
         comps = Comps(t, obj, point, eyev, normalv, inside, over_point, under_point, reflectv)
