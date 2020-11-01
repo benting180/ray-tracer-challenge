@@ -1,4 +1,5 @@
 from misc import EPSILON
+from math import sqrt
 
 class Comps:
     def __init__(self, t, obj, point, eyev, normalv, inside, over_point, under_point, reflectv, n1=1.0, n2=1.0):
@@ -13,6 +14,20 @@ class Comps:
         self.reflectv = reflectv
         self.n1 = n1
         self.n2 = n2
+    
+    def schlick(self):
+        cos = self.eyev.dot(self.normalv)
+        if self.n1 > self.n2:
+            n = self.n1 / self.n2
+            sin2_t = n*n * (1.0 - cos**2)
+            if sin2_t > 1.0:
+                return 1.0
+            
+            cos_t = sqrt(1.0 - sin2_t)
+            cos = cos_t
+        r0 = ((self.n1 - self.n2) / (self.n1 + self.n2))**2
+        return r0 + (1 - r0) * (1 - cos) ** 5
+
 
 class Intersections:
     def __init__(self, ls):

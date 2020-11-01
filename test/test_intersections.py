@@ -4,9 +4,12 @@ from sphere import Sphere, GlassSphere
 from ray import Ray
 from point import Point
 from vector import Vector
-from misc import EPSILON
+from misc import EPSILON, equals
 from transform import translate, scale
-
+from world import World
+from plane import Plane
+from color import Color
+from math import sqrt
 
 class test_intersections(unittest.TestCase):
     def test_int1(self):

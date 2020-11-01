@@ -43,17 +43,29 @@ class World:
                     l = swap(ls, i, j)
         
         return Intersections(ls)
-
     def shade_hit(self, comps, remaining=4):
         if remaining == 0:
             return Color(0, 0, 0)
         m = comps.obj.material
         is_shadowed = self.is_shadowed(comps.over_point)
-        surface = m.lighting(comps.obj, self.light, comps.over_point, comps.eyev, comps.normalv, is_shadowed)
+        surface = m.lighting(comps.obj,
+                            self.light,
+                            comps.over_point,
+                            comps.eyev,
+                            comps.normalv,
+                            is_shadowed)
+
         reflected = self.reflected_color(comps, remaining)
         refracted = self.refracted_color(comps, remaining)
+        # print("refracted ", refracted)
+
+        material = comps.obj.material
+        if material.reflective > 0 and material.transparency > 0:
+            reflectance = comps.schlick()
+            return surface + reflected * reflectance + \
+                            refracted * (1 - reflectance)
         return surface + reflected + refracted
-    
+
     def color_at(self, ray, remaining=4):
         if remaining == 0:
             return Color(0, 0, 0)
@@ -65,12 +77,6 @@ class World:
             comps = intersection.prepare_computations(ray, intersections)
             color = self.shade_hit(comps, remaining)
         return color
-        # if intersections.count == 0:
-        #     color = Color(0, 0, 0)
-        # else:
-        #     comps = intersections[0].prepare_computations(ray)
-        #     color = self.shade_hit(comps)
-        # return color
     
     def is_shadowed(self, point):
         v = (self.light.position - point)
@@ -86,9 +92,7 @@ class World:
             return False
     
     def reflected_color(self, comps, remaining=4):
-        if remaining <= 0:
-            return Color(0, 0, 0)
-        if comps.obj.material.reflective == 0:
+        if remaining <= 0 or comps.obj.material.reflective == 0:
             return Color(0, 0, 0)
         reflect_ray = Ray(comps.over_point, comps.reflectv)
         color = self.color_at(reflect_ray, remaining - 1)
@@ -118,4 +122,3 @@ class World:
         color = temp1 * temp2
         
         return color
-

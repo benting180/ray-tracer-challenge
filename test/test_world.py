@@ -3,7 +3,7 @@ sys.path.append(os.getcwd())
 import unittest
 from world import World
 from light import Light
-from sphere import Sphere
+from sphere import Sphere, GlassSphere
 from transform import scale, translate
 from material import Material
 from color import Color
@@ -14,6 +14,7 @@ from intersections import Intersection, Intersections
 from plane import Plane
 from math import sqrt
 from pattern import TestPattern, CheckerPattern
+from misc import equals
 
 class TestWorld(unittest.TestCase):
     def test_world1(self):
@@ -266,6 +267,7 @@ class TestWorld(unittest.TestCase):
         self.assertTrue(c == Color(0, 0.99888, 0.04721))
         
     def test_shade_hit_with_transparent_material(self):
+        
         w = World()
         floor = Plane()
         floor.set_transform(translate(0, -1, 0))
@@ -287,6 +289,67 @@ class TestWorld(unittest.TestCase):
         comps = xs[0].prepare_computations(r, xs)
         color = w.shade_hit(comps, 5)
         self.assertTrue(Color(0.93642, 0.68642, 0.68642) == color)
+
+    def test_schlick_approximation_under_total_internal_reflection(self):
+        shape = GlassSphere()
+        r = Ray(Point(0, 0, sqrt(2)/2), Vector(0, 1, 0))
+        ls = [
+            Intersection(-sqrt(2)/2, shape),
+            Intersection(sqrt(2)/2, shape)
+        ]
+        xs = Intersections(ls)
+        comps = xs[1].prepare_computations(r, xs)
+        reflectance = comps.schlick()
+        self.assertTrue(equals(reflectance, 1.0))
+    
+    def test_schlick_approximation_with_perpendicular_viewing_angle(self):
+        shape = GlassSphere()
+        r = Ray(Point(0, 0, 0), Vector(0, 1, 0))
+        ls = [
+            Intersection(-1, shape),
+            Intersection(1, shape)
+        ]
+        xs = Intersections(ls)
+        comps = xs[1].prepare_computations(r, xs)
+        reflectance = comps.schlick()
+        self.assertTrue(equals(reflectance, 0.04))
+    
+    def test_schlick_approximation_with_small_angle_and_n2_larger_than_n1(self):
+        shape = GlassSphere()
+        r = Ray(Point(0, 0.99, -2), Vector(0, 0, 1))
+        ls = [
+            Intersection(1.8589, shape),
+        ]
+        xs = Intersections(ls)
+        comps = xs[0].prepare_computations(r, xs)
+        reflectance = comps.schlick()
+        self.assertTrue(equals(reflectance, 0.48873))
+    
+    def test_shade_hit_with_reflective_transparent_material(self):
+        w = World()
+        r = Ray(Point(0, 0, -3), Vector(0, -sqrt(2)/2, sqrt(2)/2))
+
+        floor = Plane()
+        floor.set_transform(translate(0, -1, 0))
+        floor.material.reflective = 0.5
+        floor.material.transparency = 0.5
+        floor.material.refractive_index = 1.5
+        w.objs.append(floor)
+
+        ball = Sphere()
+        ball.material.color = Color(1, 0, 0)
+        ball.material.ambient = 0.5
+        ball.set_transform(translate(0, -3.5, -0.5))
+        w.objs.append(ball)
+
+        ls = [Intersection(sqrt(2), floor)]
+        xs = Intersections(ls)
+        comps = xs[0].prepare_computations(r, xs)
+        color = w.shade_hit(comps, 5)
+        # print(color)
+        self.assertTrue(Color(0.93391, 0.69643, 0.69243) == color)
+
+
 
 if __name__ == "__main__":
     unittest.main()
