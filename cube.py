@@ -9,10 +9,8 @@ from misc import EPSILON
 from vector import Vector
 
 class Cube(Shape):
-    def __init__(self, origin=Point(0, 0, 0), radius=1):
+    def __init__(self):
         Shape.__init__(self)
-        self.origin = origin
-        self.radius = radius
         self.parent = Shape
 
     def local_intersect(self, ray):
